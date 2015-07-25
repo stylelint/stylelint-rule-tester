@@ -42,7 +42,7 @@ module.exports = function(rule, ruleName, preceedingPlugins) {
   function createRuleTester(testFn, primaryOptions, secondaryOptions, cb) {
     var optionsString = JSON.stringify(primaryOptions);
     if (secondaryOptions) {
-      optionsString += ', ' + secondaryOptions;
+      optionsString += ', ' + JSON.stringify(secondaryOptions);
     }
     var ruleOptionsOutput = ruleName + ': ' + optionsString;
     cb({ ok: ok, notOk: notOk });

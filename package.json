@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No test specified\""
   },
   "repository": {
     "type": "git",
@@ -30,10 +30,6 @@
     "tape": "^4.0.1"
   },
   "devDependencies": {
-    "eslint": "0.24.1",
-    "fixture-stdout": "0.2.1",
-    "sinon": "1.15.4",
-    "tap-out": "1.3.2",
-    "tap-parser": "1.1.6"
+    "eslint": "0.24.1"
   }
 }
