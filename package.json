@@ -1,0 +1,39 @@
+{
+  "name": "stylelint-rule-tester",
+  "version": "0.1.0",
+  "description": "An easy way to test stylelint rules",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stylelint/stylelint-rule-tester.git"
+  },
+  "keywords": [
+    "stylelint",
+    "postcss",
+    "css",
+    "linter",
+    "test"
+  ],
+  "author": "David Clark",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stylelint/stylelint-rule-tester/issues"
+  },
+  "homepage": "https://github.com/stylelint/stylelint-rule-tester#readme",
+  "dependencies": {
+    "postcss": "^4.1.16",
+    "tape": "^4.0.1"
+  },
+  "devDependencies": {
+    "eslint": "0.24.1",
+    "fixture-stdout": "0.2.1",
+    "sinon": "1.15.4",
+    "tap-out": "1.3.2",
+    "tap-parser": "1.1.6"
+  }
+}
