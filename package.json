@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "echo \"No test specified\""
+    "test": "echo \"Run node test/visual.js to check output\""
   },
   "repository": {
     "type": "git",

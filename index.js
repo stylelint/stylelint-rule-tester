@@ -7,44 +7,36 @@ var test = require('tape');
  * Create a ruleTester for a specified rule.
  *
  * The ruleTester is a function accepting options and a callback.
- * The callback is passed on object exposing functions that
- * check CSS strings against the rule configured with the specified options.
- *
- * `ruleTester.only()` has the same API but uses `test.only()` from
- * tape -- meaning that those tests run exclusively.
+ * The callback is passed on object exposing `ok` and `notOk` functions,
+ * which check CSS strings against the rule configured with the specified options.
  *
  * @param {function} rule
  * @param {string} ruleName
- * @param {function[]} [preceedingPlugins] - Array of PostCSS plugins to
+ * @param {object} [testerOptions]
+ * @param {function[]} [testerOptions.preceedingPlugins] - Array of PostCSS plugins to
  *   run the CSS string through *before* linting it
- * @return {function} ruleTester for the specified rule
+ * @param {boolean} [testerOptions.escapeCss = true] - If `false`, the CSS string printed
+ *   to the console will not be escaped.
+ *   This is useful if you want to read newlines and indentation.
+ * @return {function} ruleTester for the specified rule/options
  */
-module.exports = function(rule, ruleName, preceedingPlugins) {
-
-  function ruleTester(primaryOptions, secondaryOptions, cb) {
-    if (typeof secondaryOptions === 'function') {
-      cb = secondaryOptions;
-      secondaryOptions = null;
-    }
-    return createRuleTester(test, primaryOptions, secondaryOptions, cb);
-  }
-
-  ruleTester.only = function(primaryOptions, secondaryOptions, cb) {
-    if (typeof secondaryOptions === 'function') {
-      cb = secondaryOptions;
-      secondaryOptions = null;
-    }
-    return createRuleTester(test.only, primaryOptions, secondaryOptions, cb);
-  };
+module.exports = function(rule, ruleName, testerOptions) {
+  testerOptions = testerOptions || {};
+  testerOptions.escapeCss = testerOptions.escapeCss !== false;
 
   return ruleTester;
 
-  function createRuleTester(testFn, primaryOptions, secondaryOptions, cb) {
-    var optionsString = JSON.stringify(primaryOptions);
-    if (secondaryOptions) {
-      optionsString += ', ' + JSON.stringify(secondaryOptions);
+  function ruleTester(rulePrimaryOptions, ruleSecondaryOptions, cb) {
+    if (typeof ruleSecondaryOptions === 'function') {
+      cb = ruleSecondaryOptions;
+      ruleSecondaryOptions = null;
     }
-    var ruleOptionsOutput = ruleName + ': ' + optionsString;
+
+    var ruleOptionsString = (rulePrimaryOptions) ? JSON.stringify(rulePrimaryOptions) : '';
+    if (ruleOptionsString && ruleSecondaryOptions) {
+      ruleOptionsString += ', ' + JSON.stringify(ruleSecondaryOptions);
+    }
+
     cb({ ok: ok, notOk: notOk });
 
     /**
@@ -55,10 +47,9 @@ module.exports = function(rule, ruleName, preceedingPlugins) {
      * @param {string} [description]
      */
     function ok(cssString, description) {
-      testFn('pass: ' + JSON.stringify(cssString), function(t) {
-        t.comment(ruleOptionsOutput);
+      test(testTitleStr(cssString), function(t) {
         var result = postcssProcess(cssString);
-        t.equal(result.warnings().length, 0, [description, 'should pass'].join(' '));
+        t.equal(result.warnings().length, 0, prepender(description, 'should pass'));
         t.end();
       });
     }
@@ -73,17 +64,13 @@ module.exports = function(rule, ruleName, preceedingPlugins) {
      * @param {string} [description]
      */
     function notOk(cssString, warningMessage, description) {
-      testFn('fail: ' + JSON.stringify(cssString), function(t) {
-        t.comment(ruleOptionsOutput);
+      test(testTitleStr(cssString), function(t) {
         var result = postcssProcess(cssString);
         var warnings = result.warnings();
-        t.equal(warnings.length, 1, [description, 'should warn'].join(' '));
+        t.equal(warnings.length, 1, prepender(description, 'should warn'));
         if (warnings.length === 1) {
-          var finishedDescription = [
-            description,
-            'should report "' + warningMessage + '"',
-          ].join(' ');
-          t.equal(warnings[0].text, warningMessage, finishedDescription);
+          t.equal(warnings[0].text, warningMessage,
+            prepender(description, 'should report "' + warningMessage + '"'));
         } else {
           t.pass('no warning to test');
         }
@@ -94,15 +81,34 @@ module.exports = function(rule, ruleName, preceedingPlugins) {
     function postcssProcess(cssString) {
       var processor = postcss();
 
-      if (preceedingPlugins) {
-        preceedingPlugins.forEach(function(plugin) {
+      if (testerOptions.preceedingPlugins) {
+        testerOptions.preceedingPlugins.forEach(function(plugin) {
           processor.use(plugin);
         });
       }
 
       return processor
-        .use(rule(primaryOptions, secondaryOptions))
+        .use(rule(rulePrimaryOptions, ruleSecondaryOptions))
         .process(cssString);
+    }
+
+    function testTitleStr(css) {
+      var result = '\ncss: ';
+      if (testerOptions.escapeCss) {
+        result += JSON.stringify(css);
+      } else {
+        result += '\n' + css;
+      }
+      result += '\nrule: ' + ruleName;
+      result += '\noptions: ' + ruleOptionsString;
+      return result;
     }
   }
 };
+
+function prepender(a, b) {
+  if (a) {
+    return a + ' ' + b;
+  }
+  return b;
+}
