@@ -1,6 +1,6 @@
 {
   "name": "stylelint-rule-tester",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "An easy way to test stylelint rules",
   "main": "index.js",
   "files": [
@@ -29,10 +29,10 @@
   },
   "homepage": "https://github.com/stylelint/stylelint-rule-tester#readme",
   "dependencies": {
-    "postcss": "^4.1.16",
-    "tape": "^4.0.1"
+    "postcss": "^5.0.2",
+    "tape": "^4.2.0"
   },
   "devDependencies": {
-    "eslint": "0.24.1"
+    "eslint": "1.2.1"
   }
 }
