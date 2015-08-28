@@ -26,7 +26,11 @@ testRule('always', function(tr) {
   tr.notOk('a { }', rejectionMessage, 'rule block with a single space');
   tr.notOk('a {\n}', rejectionMessage, 'rule block with a newline');
   tr.notOk('@media print {}', rejectionMessage, 'empty at-rule block');
-  tr.notOk('@media print { a {} }', rejectionMessage, 'at-rule block with an empty rule block');
+  tr.notOk('@media print { a {} }', {
+    message: rejectionMessage,
+    line: 6,
+    column: 3,
+  }, 'at-rule block with an empty rule block');
 });
 ```
 
@@ -59,35 +63,37 @@ css: "a {}"
 rule: my-no-empty-blocks-rule
 options: "always"
 ok 5 empty rule block should warn
-ok 6 empty rule block should report "Please, no empty blocks!"
+ok 6 empty rule block warning message should be "Please, no empty blocks!"
 #
 css: "a { }"
 rule: my-no-empty-blocks-rule
 options: "always"
 ok 7 rule block with a single space should warn
-ok 8 rule block with a single space should report "Please, no empty blocks!"
+ok 8 rule block with a single space warning message should be "Please, no empty blocks!"
 #
 css: "a {\n}"
 rule: my-no-empty-blocks-rule
 options: "always"
 ok 9 rule block with a newline should warn
-ok 10 rule block with a newline should report "Please, no empty blocks!"
+ok 10 rule block with a newline warning message should be "Please, no empty blocks!"
 #
 css: "@media print {}"
 rule: my-no-empty-blocks-rule
 options: "always"
 ok 11 empty at-rule block should warn
-ok 12 empty at-rule block should report "Please, no empty blocks!"
+ok 12 empty at-rule block warning message should be "Please, no empty blocks!"
 #
 css: "@media print { a {} }"
 rule: my-no-empty-blocks-rule
 options: "always"
 ok 13 at-rule block with an empty rule block should warn
-ok 14 at-rule block with an empty rule block should report "Please, no empty blocks!"
+ok 14 at-rule block with an empty rule block warning message should be "Please, no empty blocks!"
+ok 15 at-rule block with an empty rule block warning should be at line 6
+ok 16 at-rule block with an empty rule block warning should be at column 3
 
-1..14
-# tests 14
-# pass  14
+1..16
+# tests 16
+# pass  16
 
 # ok
 ```

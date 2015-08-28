@@ -11,6 +11,8 @@ function noEmptyBlocksRule() {
       if (statement.nodes !== undefined && statement.nodes.length === 0) {
         result.warn('Please, no empty blocks!', {
           node: statement,
+          line: 6,
+          column: 3,
         });
       }
     }
@@ -31,5 +33,9 @@ testRule('always', function(tr) {
   tr.notOk('a { }', rejectionMessage, 'rule block with a single space');
   tr.notOk('a {\n}', rejectionMessage, 'rule block with a newline');
   tr.notOk('@media print {}', rejectionMessage, 'empty at-rule block');
-  tr.notOk('@media print { a {} }', rejectionMessage, 'at-rule block with an empty rule block');
+  tr.notOk('@media print { a {} }', {
+    message: rejectionMessage,
+    line: 6,
+    column: 3,
+  }, 'at-rule block with an empty rule block');
 });

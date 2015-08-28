@@ -60,19 +60,31 @@ module.exports = function(rule, ruleName, testerOptions) {
      * with the expected warning message.
      *
      * @param {string} cssString
-     * @param {string} warningMessage
+     * @param {string|object} warning
+     * @param {string} [warning.message]
+     * @param {string} [warning.line]
+     * @param {string} [warning.column]
      * @param {string} [description]
      */
-    function notOk(cssString, warningMessage, description) {
+    function notOk(cssString, warning, description) {
       test(testTitleStr(cssString), function(t) {
+        var warningMessage = (typeof warning === 'string')
+          ? warning
+          : warning.message;
         var result = postcssProcess(cssString);
         var warnings = result.warnings();
         t.equal(warnings.length, 1, prepender(description, 'should warn'));
         if (warnings.length === 1) {
           t.equal(warnings[0].text, warningMessage,
-            prepender(description, 'should report "' + warningMessage + '"'));
-        } else {
-          t.pass('no warning to test');
+            prepender(description, 'warning message should be "' + warningMessage + '"'));
+          if (warning.line) {
+            t.equal(warnings[0].line, warning.line,
+              prepender(description, 'warning should be at line ' + warning.line));
+          }
+          if (warning.column) {
+            t.equal(warnings[0].column, warning.column,
+              prepender(description, 'warning should be at column ' + warning.column));
+          }
         }
         t.end();
       });
