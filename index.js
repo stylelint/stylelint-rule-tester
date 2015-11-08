@@ -1,6 +1,6 @@
 'use strict';
 
-var postcss = require('postcss');
+var postcss = require ('postcss');
 var test = require('tape');
 
 /**
@@ -18,9 +18,11 @@ var test = require('tape');
  * @param {boolean} [testerOptions.escapeCss = true] - If `false`, the CSS string printed
  *   to the console will not be escaped.
  *   This is useful if you want to read newlines and indentation.
+ * @param {boolean} [testerOptions.printWarnings = false] - If `true`, the tester
+ *   will print all the warnings that each test case produces.
  * @return {function} ruleTester for the specified rule/options
  */
-module.exports = function(rule, ruleName, testerOptions) {
+function ruleTester(rule, ruleName, testerOptions) {
   testerOptions = testerOptions || {};
   testerOptions.escapeCss = testerOptions.escapeCss !== false;
 
@@ -48,8 +50,13 @@ module.exports = function(rule, ruleName, testerOptions) {
      */
     function ok(cssString, description) {
       test(testTitleStr(cssString), function(t) {
-        var result = postcssProcess(cssString);
-        t.equal(result.warnings().length, 0, prepender(description, 'should pass'));
+        var warnings = postcssProcess(cssString).warnings();
+        if (testerOptions.printWarnings) {
+          warnings.forEach(function(warning) {
+            t.comment('warning: ' + warning.text);
+          });
+        }
+        t.equal(warnings.length, 0, prepender(description, 'should pass'));
         t.end();
       });
     }
@@ -71,8 +78,12 @@ module.exports = function(rule, ruleName, testerOptions) {
         var warningMessage = (typeof warning === 'string')
           ? warning
           : warning.message;
-        var result = postcssProcess(cssString);
-        var warnings = result.warnings();
+        var warnings = postcssProcess(cssString).warnings();
+        if (testerOptions.printWarnings) {
+          warnings.forEach(function(warning) {
+            t.comment('warning: ' + warning.text);
+          });
+        }
         t.equal(warnings.length, 1, prepender(description, 'should warn'));
         if (warnings.length === 1) {
           t.equal(warnings[0].text, warningMessage,
@@ -116,7 +127,18 @@ module.exports = function(rule, ruleName, testerOptions) {
       return result;
     }
   }
-};
+}
+
+module.exports = ruleTester;
+
+/**
+ * The same as `ruleTester`, but sets the `printWarnings` option to `true`.
+ */
+module.exports.printWarnings = function(rule, ruleName, testerOptions) {
+  testerOptions = testerOptions || {};
+  testerOptions.printWarnings = true;
+  return ruleTester(rule, ruleName, testerOptions);
+}
 
 function prepender(a, b) {
   if (a) {

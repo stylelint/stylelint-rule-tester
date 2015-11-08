@@ -33,7 +33,7 @@ testRule('always', function(tr) {
   tr.notOk('a { }', rejectionMessage, 'rule block with a single space');
   tr.notOk('a {\n}', rejectionMessage, 'rule block with a newline');
   tr.notOk('@media print {}', rejectionMessage, 'empty at-rule block');
-  tr.notOk('@media print { a {} }', {
+  tr.notOk('@media print { a {} b {}}', {
     message: rejectionMessage,
     line: 6,
     column: 3,

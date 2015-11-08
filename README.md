@@ -2,7 +2,7 @@
 
 An easy way to test [stylelint](https://github.com/stylelint/stylelint) rules.
 
-For documentation, read the comments.
+For documentation, read the comments (or if you would like to help write docs, please PR!).
 
 For examples, check out the rule tests in [stylelint](https://github.com/stylelint/stylelint).
 
