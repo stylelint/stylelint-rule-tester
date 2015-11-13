@@ -50,14 +50,17 @@ function ruleTester(rule, ruleName, testerOptions) {
      */
     function ok(cssString, description) {
       test(testTitleStr(cssString), function(t) {
-        var warnings = postcssProcess(cssString).warnings();
-        if (testerOptions.printWarnings) {
-          warnings.forEach(function(warning) {
-            t.comment('warning: ' + warning.text);
-          });
-        }
-        t.equal(warnings.length, 0, prepender(description, 'should pass'));
-        t.end();
+        t.plan(1);
+        postcssProcess(cssString).then(function(result) {
+          var warnings = result.warnings();
+          if (testerOptions.printWarnings) {
+            warnings.forEach(function(warning) {
+              t.comment('warning: ' + warning.text);
+            });
+          }
+          t.equal(warnings.length, 0, prepender(description, 'should pass'));
+
+        })
       });
     }
 
@@ -78,26 +81,27 @@ function ruleTester(rule, ruleName, testerOptions) {
         var warningMessage = (typeof warning === 'string')
           ? warning
           : warning.message;
-        var warnings = postcssProcess(cssString).warnings();
-        if (testerOptions.printWarnings) {
-          warnings.forEach(function(warning) {
-            t.comment('warning: ' + warning.text);
-          });
-        }
-        t.equal(warnings.length, 1, prepender(description, 'should warn'));
-        if (warnings.length === 1) {
+        t.plan(4)
+        postcssProcess(cssString).then(function(result) {
+          var warnings = result.warnings();
+
+          if (testerOptions.printWarnings) {
+            warnings.forEach(function(warning) {
+              t.comment('warning: ' + warning.text);
+            });
+          }
+          t.equal(warnings.length, 1, prepender(description, 'should warn'));
           t.equal(warnings[0].text, warningMessage,
             prepender(description, 'warning message should be "' + warningMessage + '"'));
           if (warning.line) {
             t.equal(warnings[0].line, warning.line,
               prepender(description, 'warning should be at line ' + warning.line));
-          }
+          } else { t.pass('no line number expected'); }
           if (warning.column) {
             t.equal(warnings[0].column, warning.column,
               prepender(description, 'warning should be at column ' + warning.column));
-          }
-        }
-        t.end();
+          } else { t.pass('no column number expected'); }
+        });
       });
     }
 
