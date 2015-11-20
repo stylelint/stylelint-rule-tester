@@ -47,11 +47,12 @@ function ruleTester(rule, ruleName, testerOptions) {
      *
      * @param {string} cssString
      * @param {string} [description]
+     * @param {object} [postcssOptions]
      */
-    function ok(cssString, description) {
+    function ok(cssString, description, postcssOptions) {
       test(testTitleStr(cssString), function(t) {
         t.plan(1);
-        postcssProcess(cssString).then(function(result) {
+        postcssProcess(cssString, postcssOptions).then(function(result) {
           var warnings = result.warnings();
           if (testerOptions.printWarnings) {
             warnings.forEach(function(warning) {
@@ -75,14 +76,15 @@ function ruleTester(rule, ruleName, testerOptions) {
      * @param {string} [warning.line]
      * @param {string} [warning.column]
      * @param {string} [description]
+     * @param {object} [postcssOptions]
      */
-    function notOk(cssString, warning, description) {
+    function notOk(cssString, warning, description, postcssOptions) {
       test(testTitleStr(cssString), function(t) {
         var warningMessage = (typeof warning === 'string')
           ? warning
           : warning.message;
         t.plan(4)
-        postcssProcess(cssString).then(function(result) {
+        postcssProcess(cssString, postcssOptions).then(function(result) {
           var warnings = result.warnings();
 
           if (testerOptions.printWarnings) {
@@ -105,7 +107,7 @@ function ruleTester(rule, ruleName, testerOptions) {
       });
     }
 
-    function postcssProcess(cssString) {
+    function postcssProcess(cssString, postcssOptions) {
       var processor = postcss();
 
       if (testerOptions.preceedingPlugins) {
@@ -116,7 +118,7 @@ function ruleTester(rule, ruleName, testerOptions) {
 
       return processor
         .use(rule(rulePrimaryOptions, ruleSecondaryOptions))
-        .process(cssString);
+        .process(cssString, postcssOptions);
     }
 
     function testTitleStr(css) {
