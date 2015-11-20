@@ -1,5 +1,9 @@
 # Changelog
 
+## Head
+
+- Add `postcssOptions` so you can pass options to PostCSS's `process()` function.
+
 ## 0.5.0
 
 - Make the testing async.

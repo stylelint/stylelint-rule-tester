@@ -26,7 +26,6 @@ var rejectionMessage = 'Please, no empty blocks!';
 testRule('always', function(tr) {
   tr.ok('', 'empty');
   tr.ok('@import \'foo.css\';', 'blockless at-rule');
-  tr.ok('// comment', 'SCSS comment', { syntax: scss });
 
   tr.ok('a { color: pink; }', 'rule with a declaration');
   tr.ok('@media print { a { color: pink; } }', 'at-rule with a rule with a declaration');
@@ -40,5 +39,15 @@ testRule('always', function(tr) {
     line: 6,
     column: 3,
   }, 'at-rule block with an empty rule block');
-  tr.notOk('a {} // comment', rejectionMessage, 'empty rule block and a SCSS comment', { syntax: scss });
 });
+
+var testRuleScss = ruleTester(noEmptyBlocksRule, 'my-no-empty-blocks-rule', {
+  postcssOptions: {
+    syntax: scss,
+  },
+});
+
+testRuleScss('always', function(tr) {
+  tr.ok('// comment', 'SCSS comment');
+  tr.notOk('a {} // comment', rejectionMessage, 'empty rule block and a SCSS comment');
+})

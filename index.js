@@ -20,6 +20,9 @@ var test = require('tape');
  *   This is useful if you want to read newlines and indentation.
  * @param {boolean} [testerOptions.printWarnings = false] - If `true`, the tester
  *   will print all the warnings that each test case produces.
+ * @param {object} [testerOptions.postcssOptions] - An objects object passed
+ *   to postcssProcessor.process().
+ *   cf. https://github.com/postcss/postcss/blob/master/docs/api.md#processorprocesscss-opts
  * @return {function} ruleTester for the specified rule/options
  */
 function ruleTester(rule, ruleName, testerOptions) {
@@ -47,12 +50,11 @@ function ruleTester(rule, ruleName, testerOptions) {
      *
      * @param {string} cssString
      * @param {string} [description]
-     * @param {object} [postcssOptions]
      */
-    function ok(cssString, description, postcssOptions) {
+    function ok(cssString, description) {
       test(testTitleStr(cssString), function(t) {
         t.plan(1);
-        postcssProcess(cssString, postcssOptions).then(function(result) {
+        postcssProcess(cssString).then(function(result) {
           var warnings = result.warnings();
           if (testerOptions.printWarnings) {
             warnings.forEach(function(warning) {
@@ -76,15 +78,14 @@ function ruleTester(rule, ruleName, testerOptions) {
      * @param {string} [warning.line]
      * @param {string} [warning.column]
      * @param {string} [description]
-     * @param {object} [postcssOptions]
      */
-    function notOk(cssString, warning, description, postcssOptions) {
+    function notOk(cssString, warning, description) {
       test(testTitleStr(cssString), function(t) {
         var warningMessage = (typeof warning === 'string')
           ? warning
           : warning.message;
         t.plan(4)
-        postcssProcess(cssString, postcssOptions).then(function(result) {
+        postcssProcess(cssString).then(function(result) {
           var warnings = result.warnings();
 
           if (testerOptions.printWarnings) {
@@ -107,7 +108,7 @@ function ruleTester(rule, ruleName, testerOptions) {
       });
     }
 
-    function postcssProcess(cssString, postcssOptions) {
+    function postcssProcess(cssString) {
       var processor = postcss();
 
       if (testerOptions.preceedingPlugins) {
@@ -118,7 +119,7 @@ function ruleTester(rule, ruleName, testerOptions) {
 
       return processor
         .use(rule(rulePrimaryOptions, ruleSecondaryOptions))
-        .process(cssString, postcssOptions);
+        .process(cssString, testerOptions.postcssOptions);
     }
 
     function testTitleStr(css) {
