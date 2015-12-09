@@ -13,6 +13,7 @@
     "comma-style": 2,
     "consistent-return": 0,
     "curly": 0,
+    "no-console": 0,
     "no-lonely-if": 2,
     "no-nested-ternary": 2,
     "no-use-before-define": [2, "nofunc"],

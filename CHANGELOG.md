@@ -1,5 +1,9 @@
 # Changelog
 
+## Head
+
+- Better error handling.
+
 ## 0.6.0
 
 - Add `postcssOptions` so you can pass options to PostCSS's `process()` function.

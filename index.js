@@ -62,7 +62,8 @@ function ruleTester(rule, ruleName, testerOptions) {
             });
           }
           t.equal(warnings.length, 0, prepender(description, 'should pass'));
-
+        }).catch(function(err) {
+          console.log(err.stack);
         })
       });
     }
@@ -94,16 +95,23 @@ function ruleTester(rule, ruleName, testerOptions) {
             });
           }
           t.equal(warnings.length, 1, prepender(description, 'should warn'));
-          t.equal(warnings[0].text, warningMessage,
-            prepender(description, 'warning message should be "' + warningMessage + '"'));
-          if (warning.line) {
-            t.equal(warnings[0].line, warning.line,
+
+          var warning = warnings[0];
+
+          if (warning) {
+            t.equal(warning.text, warningMessage,
+              prepender(description, 'warning message should be "' + warningMessage + '"'));
+          } else { t.pass('no warning to check'); }
+          if (warning && warning.line) {
+            t.equal(warning.line, warning.line,
               prepender(description, 'warning should be at line ' + warning.line));
           } else { t.pass('no line number expected'); }
-          if (warning.column) {
-            t.equal(warnings[0].column, warning.column,
+          if (warning && warning.column) {
+            t.equal(warning.column, warning.column,
               prepender(description, 'warning should be at column ' + warning.column));
           } else { t.pass('no column number expected'); }
+        }).catch(function(err) {
+          console.log(err.stack);
         });
       });
     }
