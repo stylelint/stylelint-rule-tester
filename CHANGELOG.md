@@ -1,6 +1,6 @@
 # Changelog
 
-## Head
+## 0.6.1
 
 - Better error handling.
 
