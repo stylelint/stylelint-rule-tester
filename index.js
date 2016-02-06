@@ -74,41 +74,41 @@ function ruleTester(rule, ruleName, testerOptions) {
      * with the expected warning message.
      *
      * @param {string} cssString
-     * @param {string|object} warning
-     * @param {string} [warning.message]
-     * @param {string} [warning.line]
-     * @param {string} [warning.column]
+     * @param {string|object} expectedWarning
+     * @param {string} [expectedWarning.message]
+     * @param {string} [expectedWarning.line]
+     * @param {string} [expectedWarning.column]
      * @param {string} [description]
      */
-    function notOk(cssString, warning, description) {
+    function notOk(cssString, expectedWarning, description) {
       test(testTitleStr(cssString), function(t) {
-        var warningMessage = (typeof warning === 'string')
-          ? warning
-          : warning.message;
+        var expectedWarningMessage = (typeof expectedWarning === 'string')
+          ? expectedWarning
+          : expectedWarning.message;
         t.plan(4)
         postcssProcess(cssString).then(function(result) {
-          var warnings = result.warnings();
+          var allActualWarnings = result.warnings();
 
           if (testerOptions.printWarnings) {
-            warnings.forEach(function(warning) {
+            allActualWarnings.forEach(function(warning) {
               t.comment('warning: ' + warning.text);
             });
           }
-          t.equal(warnings.length, 1, prepender(description, 'should warn'));
+          t.equal(allActualWarnings.length, 1, prepender(description, 'should warn'));
 
-          var warning = warnings[0];
+          var actualWarning = allActualWarnings[0];
 
-          if (warning) {
-            t.equal(warning.text, warningMessage,
-              prepender(description, 'warning message should be "' + warningMessage + '"'));
+          if (actualWarning) {
+            t.equal(actualWarning.text, expectedWarningMessage,
+              prepender(description, 'warning message should be "' + expectedWarningMessage + '"'));
           } else { t.pass('no warning to check'); }
-          if (warning && warning.line) {
-            t.equal(warning.line, warning.line,
-              prepender(description, 'warning should be at line ' + warning.line));
+          if (actualWarning && expectedWarning.line) {
+            t.equal(actualWarning.line, expectedWarning.line,
+              prepender(description, 'warning should be at line ' + expectedWarning.line));
           } else { t.pass('no line number expected'); }
-          if (warning && warning.column) {
-            t.equal(warning.column, warning.column,
-              prepender(description, 'warning should be at column ' + warning.column));
+          if (actualWarning && expectedWarning.column) {
+            t.equal(actualWarning.column, expectedWarning.column,
+              prepender(description, 'warning should be at column ' + expectedWarning.column));
           } else { t.pass('no column number expected'); }
         }).catch(function(err) {
           console.log(err.stack);

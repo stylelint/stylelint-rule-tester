@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2
+
+- Fix a bug caused by poorly named variables.
+
 ## 0.6.1
 
 - Better error handling.
