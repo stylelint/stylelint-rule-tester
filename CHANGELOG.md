@@ -2,7 +2,7 @@
 
 ## 0.6.2
 
-- Fix a bug caused by poorly named variables.
+- Fixed a bug that caused position checks to never fail.
 
 ## 0.6.1
 
