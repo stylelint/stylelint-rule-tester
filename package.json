@@ -33,7 +33,7 @@
     "tape": "^4.2.0"
   },
   "devDependencies": {
-    "eslint": "2.1.0",
+    "eslint": "^2.4.0",
     "postcss-scss": "0.1.3"
   }
 }
