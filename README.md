@@ -1,5 +1,7 @@
 # stylelint-rule-tester
 
+**DEPRECATED: Use [stylelint-test-rule-tape](https://github.com/stylelint/stylelint-test-rule-tape) instead!**
+
 An easy way to test [stylelint](https://github.com/stylelint/stylelint) rules.
 
 For documentation, read the comments (or if you would like to help write docs, please PR!).
