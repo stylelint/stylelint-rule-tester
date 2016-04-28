@@ -12,6 +12,7 @@
     "comma-dangle": [2, "always-multiline"],
     "comma-style": 2,
     "consistent-return": 0,
+    "keyword-spacing": 2,
     "curly": 0,
     "no-console": 0,
     "no-lonely-if": 2,
@@ -19,7 +20,6 @@
     "no-use-before-define": [2, "nofunc"],
     "quotes": [2, "single"],
     "space-before-function-paren": [2, "never"],
-    "space-after-keywords": [2, "always"],
     "space-before-blocks": [2, "always"],
     "space-in-parens": [2, "never"],
     "space-unary-ops": 2
